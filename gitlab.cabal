@@ -14,19 +14,19 @@ cabal-version: >= 1.10
 
 library
   exposed-modules:
-    -- GitLab
-    -- GitLab.Project
-    -- GitLab.ProjectSnippet
-    -- GitLab.Repository
-    -- GitLab.DeployKey
+    GitLab
+    GitLab.DeployKey
+    GitLab.Group
+    GitLab.Issue
+    GitLab.MergeRequest
+    GitLab.Milestone
+    GitLab.Note
+    GitLab.Project
+    GitLab.ProjectSnippet
+    GitLab.Repository
+    GitLab.Session
+    GitLab.SystemHook
     GitLab.User
-    -- GitLab.Group
-    -- GitLab.Session
-    -- GitLab.Issue
-    -- GitLab.Milestone
-    -- GitLab.MergeRequest
-    -- GitLab.Note
-    -- GitLab.SystemHook
   other-modules:
     GitLab.Monad
     GitLab.REST

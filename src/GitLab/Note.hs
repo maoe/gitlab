@@ -1,0 +1,1 @@
+module GitLab.Note where
