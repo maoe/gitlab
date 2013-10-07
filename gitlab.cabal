@@ -28,6 +28,8 @@ library
     -- GitLab.Note
     -- GitLab.SystemHook
   other-modules:
+    GitLab.Monad
+    GitLab.REST
     GitLab.Types
     GitLab.Util
   build-depends:
