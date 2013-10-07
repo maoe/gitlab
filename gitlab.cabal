@@ -1,0 +1,50 @@
+name: gitlab
+version: 0.0.0
+synopsis: Haskell interface to GitLab API
+description: Haskell interface to GitLab API
+homepage: https://github.com/maoe/gitlab
+license: BSD3
+license-file: LICENSE
+author: Mitsutoshi Aoe
+maintainer: Mitsutoshi Aoe <maoe@foldr.in>
+copyright: Copyright (C) 2013 Mitsutoshi Aoe
+category: Web
+build-type: Simple
+cabal-version: >= 1.10
+
+library
+  exposed-modules:
+    -- GitLab
+    -- GitLab.Project
+    -- GitLab.ProjectSnippet
+    -- GitLab.Repository
+    -- GitLab.DeployKey
+    GitLab.User
+    -- GitLab.Group
+    -- GitLab.Session
+    -- GitLab.Issue
+    -- GitLab.Milestone
+    -- GitLab.MergeRequest
+    -- GitLab.Note
+    -- GitLab.SystemHook
+  other-modules:
+    GitLab.Types
+    GitLab.Util
+  build-depends:
+        base >= 4.6 && < 4.7
+      , aeson
+      , bytestring
+      , conduit
+      , http-conduit
+      , http-types
+      , lens
+      , lens-aeson
+      , monad-control
+      , mtl
+      , path-pieces
+      , text
+      , time
+      , transformers-base
+      , unordered-containers
+  hs-source-dirs: src
+  default-language: Haskell2010
