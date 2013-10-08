@@ -3,8 +3,13 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE TemplateHaskell #-}
 module GitLab.Types
-  ( User(..)
+  ( -- * @GitLabT@ monad transformer
+    module GitLab.Monad
+
+  -- * Users
+  , User(..)
   , UserId
+  , UserState(..)
   , ThemeId
   , ColorSchemeId
   , CurrentUser(..)
@@ -12,7 +17,9 @@ module GitLab.Types
   , SshKey(..)
   , SshKeyId
 
-  , module GitLab.Monad
+  -- * Groups
+  , Group(..)
+  , GroupId
   ) where
 
 import Control.Monad (mzero)
@@ -29,6 +36,15 @@ import qualified Data.HashMap.Strict as HM
 
 import GitLab.Monad
 import GitLab.Util (camelToSnake, dropPrefix)
+
+data Group = Group
+  { groupId :: GroupId
+  , groupName :: Text
+  , groupPath :: Text
+  , groupOwnerId :: UserId
+  }
+
+newtype GroupId = GroupId Int deriving (Show, Num, PathPiece)
 
 data User = User
   { userId :: UserId
@@ -90,6 +106,12 @@ newtype SshKeyId = SshKeyId Int deriving (Show, Num, PathPiece)
 
 -------------------------------------------------
 -- Aeson instances
+
+deriveJSON defaultOptions
+  { fieldLabelModifier = camelToSnake . dropPrefix "group" }
+  ''Group
+
+deriveJSON defaultOptions ''GroupId
 
 deriveJSON defaultOptions
   { fieldLabelModifier = camelToSnake . dropPrefix "user" }
