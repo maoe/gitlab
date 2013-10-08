@@ -37,14 +37,8 @@ import qualified Data.HashMap.Strict as HM
 import GitLab.Monad
 import GitLab.Util (camelToSnake, dropPrefix)
 
-data Group = Group
-  { groupId :: GroupId
-  , groupName :: Text
-  , groupPath :: Text
-  , groupOwnerId :: UserId
-  }
-
-newtype GroupId = GroupId Int deriving (Show, Num, PathPiece)
+-----------------------------------------------------------
+-- Users
 
 data User = User
   { userId :: UserId
@@ -79,6 +73,29 @@ data CurrentUser = CurrentUser
   , currentUserCanCreateProject :: Bool
   } deriving Show
 
+data SshKey = SshKey
+  { sshKeyId :: SshKeyId
+  , sshKeyTitle :: Text
+  , sshKeyKey :: Text
+  } deriving Show
+
+newtype SshKeyId = SshKeyId Int deriving (Show, Num, PathPiece)
+
+-----------------------------------------------------------
+-- Groups
+
+data Group = Group
+  { groupId :: GroupId
+  , groupName :: Text
+  , groupPath :: Text
+  , groupOwnerId :: UserId
+  }
+
+newtype GroupId = GroupId Int deriving (Show, Num, PathPiece)
+
+-----------------------------------------------------------
+-- Aeson instances
+
 instance ToJSON CurrentUser where
   toJSON CurrentUser {..} = toJSON currentUser & _Object
     %~ HM.insert "is_admin" (toJSON currentUserIsAdmin)
@@ -95,23 +112,6 @@ instance FromJSON CurrentUser where
     currentUserCanCreateProject <- v .: "can_create_project"
     return CurrentUser {..}
   parseJSON _ = mzero
-
-data SshKey = SshKey
-  { sshKeyId :: SshKeyId
-  , sshKeyTitle :: Text
-  , sshKeyKey :: Text
-  } deriving Show
-
-newtype SshKeyId = SshKeyId Int deriving (Show, Num, PathPiece)
-
--------------------------------------------------
--- Aeson instances
-
-deriveJSON defaultOptions
-  { fieldLabelModifier = camelToSnake . dropPrefix "group" }
-  ''Group
-
-deriveJSON defaultOptions ''GroupId
 
 deriveJSON defaultOptions
   { fieldLabelModifier = camelToSnake . dropPrefix "user" }
@@ -130,3 +130,9 @@ deriveJSON defaultOptions
   ''SshKey
 
 deriveJSON defaultOptions ''SshKeyId
+
+deriveJSON defaultOptions
+  { fieldLabelModifier = camelToSnake . dropPrefix "group" }
+  ''Group
+
+deriveJSON defaultOptions ''GroupId
