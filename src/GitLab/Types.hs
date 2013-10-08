@@ -28,7 +28,7 @@ import Web.PathPieces (PathPiece(..))
 import qualified Data.HashMap.Strict as HM
 
 import GitLab.Monad
-import GitLab.Util (camelToSnake)
+import GitLab.Util (camelToSnake, dropPrefix)
 
 data User = User
   { userId :: UserId
@@ -92,11 +92,11 @@ newtype SshKeyId = SshKeyId Int deriving (Show, Num, PathPiece)
 -- Aeson instances
 
 deriveJSON defaultOptions
-  { fieldLabelModifier = camelToSnake . drop 4 }
+  { fieldLabelModifier = camelToSnake . dropPrefix "user" }
   ''User
 
 deriveJSON defaultOptions
-  { constructorTagModifier = camelToSnake . drop 4 }
+  { constructorTagModifier = camelToSnake . dropPrefix "user" }
   ''UserState
 
 deriveJSON defaultOptions ''ColorSchemeId
@@ -104,7 +104,7 @@ deriveJSON defaultOptions ''ThemeId
 deriveJSON defaultOptions ''UserId
 
 deriveJSON defaultOptions
-  { constructorTagModifier = camelToSnake . drop 6 }
+  { constructorTagModifier = camelToSnake . dropPrefix "sshKey" }
   ''SshKey
 
 deriveJSON defaultOptions ''SshKeyId
