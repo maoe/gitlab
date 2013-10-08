@@ -26,11 +26,11 @@ library
     GitLab.Repository
     GitLab.Session
     GitLab.SystemHook
+    GitLab.Types
     GitLab.User
   other-modules:
     GitLab.Monad
     GitLab.Rest
-    GitLab.Types
     GitLab.Util
   build-depends:
         base >= 4.6 && < 4.7
