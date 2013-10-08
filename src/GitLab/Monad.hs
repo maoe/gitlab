@@ -8,6 +8,7 @@ module GitLab.Monad
   ( GitLabT, runGitLabT
 
   , GitLabConfig(..)
+  , Pagination(..)
   , Credentials(..)
   ) where
 import Control.Applicative (Applicative)
@@ -47,7 +48,14 @@ data GitLabConfig = GitLabConfig
   , gitLabSecure :: Bool
   , gitLabHost :: ByteString
   , gitLabPort :: Int
+  , gitLabPagination :: Pagination
   }
+
+data Pagination
+  = NoPagination
+  | Paginate
+  | PaginateBy Int
+  deriving (Eq, Ord)
 
 data Credentials = Credentials
   { credsPrivateToken :: ByteString

@@ -1,10 +1,13 @@
+{-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE GADTs #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 module GitLab.REST
   ( rest
   , restSource
+
+  , paginate
+  , paginateBy
   ) where
 
 import Control.Monad.Reader
@@ -17,6 +20,7 @@ import Data.Aeson as A
 import Data.Conduit
 import Network.HTTP.Conduit
 import Network.HTTP.Types
+import Web.PathPieces (toPathPiece)
 import qualified Data.Conduit.List as CL
 
 import GitLab.Monad
@@ -39,16 +43,25 @@ restSource
   :: (FromJSON a, MonadBaseControl IO m, MonadResource m)
   => (Request (GitLabT m) -> Request (GitLabT m))
   -> Source (GitLabT m) a
-restSource f = do
-  GitLabConfig {..} <- lift ask
-  request <- lift . auth . modifyPath . f $ def
-    { method = "GET"
-    , secure = gitLabSecure
-    , host = gitLabHost
-    , port = gitLabPort
-    }
-  response <- lift $ httpLbs request gitLabManager
-  maybe CL.sourceNull CL.sourceList $ A.decode (responseBody response)
+restSource f = loop 1
+  where
+    loop !page = do
+      GitLabConfig {..} <- lift ask
+      request <- lift . auth . modifyPath . f $ def
+        { method = "GET"
+        , secure = gitLabSecure
+        , host = gitLabHost
+        , port = gitLabPort
+        , queryString =
+            renderQuery False $ paginationQuery page gitLabPagination
+        }
+      response <- lift $ httpLbs request gitLabManager
+      case A.decode' $ responseBody response of
+        Nothing -> return ()
+        Just entities ->
+          when (length entities >= 1 && gitLabPagination >= Paginate) $ do
+            CL.sourceList entities
+            loop $ page + 1
 
 modifyPath :: Request m -> Request m
 modifyPath request = request
@@ -65,3 +78,24 @@ auth request = do
   return request
     { requestHeaders = privateTokenHeader : requestHeaders request
     }
+
+paginationQuery :: Int -> Pagination -> Query
+paginationQuery page pagination = toQuery $ case pagination of
+   NoPagination -> [] :: [(String, Text)]
+   Paginate ->
+     [ ("page", toPathPiece (page `max` 1))
+     ]
+   PaginateBy perPage ->
+     [ ("page", toPathPiece (page `max` 1))
+     , ("per_page", toPathPiece perPage)
+     ]
+
+paginate :: Monad m => GitLabT m a -> GitLabT m a
+paginate = local $ \config -> config
+  { gitLabPagination = Paginate
+  }
+
+paginateBy :: Monad m => Int -> GitLabT m a -> GitLabT m a
+paginateBy perPage = local $ \config -> config
+  { gitLabPagination = PaginateBy perPage
+  }
