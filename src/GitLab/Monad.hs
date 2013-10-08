@@ -11,6 +11,7 @@ module GitLab.Monad
   , Pagination(..)
   , Credentials(..)
   ) where
+
 import Control.Applicative (Applicative)
 import Control.Monad.Reader
 import Data.ByteString (ByteString)
@@ -42,24 +43,27 @@ instance MonadBaseControl b m => MonadBaseControl b (GitLabT m) where
   liftBaseWith = defaultLiftBaseWith StMT
   restoreM = defaultRestoreM unStMT
 
+-- | Configurations to access to GitLab API
 data GitLabConfig = GitLabConfig
   { gitLabCreds :: Credentials
-  , gitLabManager :: HC.Manager
-  , gitLabSecure :: Bool
-  , gitLabHost :: ByteString
-  , gitLabPort :: Int
-  , gitLabPagination :: Pagination
+  , gitLabManager :: HC.Manager -- ^ HTTP client manager
+  , gitLabSecure :: Bool -- ^ HTTPS or not
+  , gitLabHost :: ByteString -- ^ Host name of GitLab instance
+  , gitLabPort :: Int -- ^ Listening port for GitLab instance
+  , gitLabPagination :: Pagination -- ^ Pagination mode
   }
 
+-- | Pagination mode
 data Pagination
-  = NoPagination
-  | Paginate
-  | PaginateBy Int
+  = NoPagination -- ^ Fetch all result at once
+  | Paginate -- ^ Default pagination (20 entries)
+  | PaginateBy Int -- ^ Fetch specified number of entries at once
   deriving (Eq, Ord)
 
 data Credentials = Credentials
-  { credsPrivateToken :: ByteString
+  { credsPrivateToken :: ByteString -- ^ User's private token
   }
 
+-- | The only way to run @GitLabT m a@ action
 runGitLabT :: GitLabConfig -> GitLabT m a -> m a
 runGitLabT config (GitLabT m) = runReaderT m config
