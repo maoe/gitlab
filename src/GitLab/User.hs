@@ -15,7 +15,7 @@ import Web.PathPieces (toPathPiece)
 import qualified Data.Aeson as A
 
 import GitLab.Types
-import GitLab.REST (rest, restSource)
+import GitLab.Rest (rest, restSource)
 import GitLab.Util
 
 data UserParams = UserParams

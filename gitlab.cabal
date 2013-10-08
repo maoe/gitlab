@@ -29,7 +29,7 @@ library
     GitLab.User
   other-modules:
     GitLab.Monad
-    GitLab.REST
+    GitLab.Rest
     GitLab.Types
     GitLab.Util
   build-depends:
