@@ -4,7 +4,6 @@
 module GitLab.User where
 import Data.Monoid ((<>))
 import Data.Text (Text)
-import Text.Printf (printf)
 import qualified Data.ByteString.Char8 as BS8
 import qualified Data.Text.Encoding as TE
 
