@@ -9,6 +9,11 @@ module GitLab.Types
   -- * Projects
   , Project(..)
   , ProjectId
+  , Namespace(..)
+  , NamespaceId
+  , ProjectMember(..)
+  , ProjectHook(..)
+  , ProjectHookId
 
   -- * Project Snippets
 
@@ -80,23 +85,63 @@ import GitLab.Util (camelToSnake, dropPrefix)
 
 data Project = Project
   { projectId :: ProjectId
-  , projectName :: Text
   , projectDescription :: Maybe Text
-  , projectDefaultBranch :: Text
-  , projectOwner :: User'
-  , projectPublic :: Bool
+
+  , projectNamespace :: Namespace
+  , projectName :: Text
+  , projectNameWithNamespace :: Text
   , projectPath :: Text
   , projectPathWithNamespace :: Text
+
+  , projectDefaultBranch :: Maybe Text
+  , projectOwner :: User'
+  , projectPublic :: Bool
+
+  , projectWebUrl :: Text
+  , projectHttpUrlToRepo :: Text
+  , projectSshUrlToRepo :: Text
+
   , projectIssuesEnabled :: Bool
   , projectMergeRequestsEnabled :: Bool
   , projectWallEnabled :: Bool
   , projectWikiEnabled :: Bool
+  , projectSnippetsEnabled :: Bool
+
   , projectCreatedAt :: UTCTime
-  , projectLastActivityAt :: UTCTime
+  , projectLastActivityAt :: Maybe UTCTime
   } deriving Show
 
 newtype ProjectId = ProjectId Int deriving (Show, Num, PathPiece)
 
+data Namespace = Namespace
+  { namespaceId :: NamespaceId
+  , namespaceName :: Text
+  , namespacePath :: Text
+  , namespaceDescription :: Text
+  , namespaceOwnerId :: UserId
+  , namespaceCreatedAt :: UTCTime
+  , namespaceUpdatedAt :: UTCTime
+  } deriving Show
+
+newtype NamespaceId = NamespaceId Int deriving (Show, Num, PathPiece)
+
+data ProjectMember = ProjectMember
+  { projectMemberId :: UserId
+  , projectMemberUsername :: Text
+  , projectMemberEmail :: Text
+  , projectMemberName :: Text
+  , projectMemberState :: UserState
+  , projectMemberCreatedAt :: UTCTime
+  , projectMemberAccessLevel :: Int
+  } deriving Show
+
+data ProjectHook = ProjectHook
+  { projectHookId :: ProjectHookId
+  , projectHookUrl :: Text
+  , projectHookCreatedAt :: UTCTime
+  } deriving Show
+
+newtype ProjectHookId = ProjectHookId Int deriving (Show, Num, PathPiece)
 
 -----------------------------------------------------------
 -- Project Snippets
@@ -177,7 +222,7 @@ data User' = User'
   , user'Username :: Text
   , user'Email :: Text
   , user'Name :: Text
-  , user'Blocked :: Bool
+  , user'State :: UserState
   , user'CreatedAt :: UTCTime
   } deriving Show
 
@@ -321,6 +366,22 @@ deriveJSON defaultOptions
   ''Project
 
 deriveJSON defaultOptions ''ProjectId
+
+deriveJSON defaultOptions
+  { fieldLabelModifier = camelToSnake . dropPrefix "namespace" }
+  ''Namespace
+
+deriveJSON defaultOptions ''NamespaceId
+
+deriveJSON defaultOptions
+  { fieldLabelModifier = camelToSnake . dropPrefix "projectMember" }
+  ''ProjectMember
+
+deriveJSON defaultOptions
+  { fieldLabelModifier = camelToSnake . dropPrefix "projectHook" }
+  ''ProjectHook
+
+deriveJSON defaultOptions ''ProjectHookId
 
 -- Project Snippets
 
