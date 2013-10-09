@@ -8,8 +8,16 @@ module GitLab.Monad
   ( GitLabT, runGitLabT
 
   , GitLabConfig(..)
-  , Pagination(..)
   , Credentials(..)
+
+  , Pagination(..)
+  , noPagination
+  , defaultPagination
+  , userPagination
+
+  -- * Re-exports from http-conduit
+  , HC.Manager
+  , HC.withManager
   ) where
 
 import Control.Applicative (Applicative)
@@ -56,9 +64,17 @@ data GitLabConfig = GitLabConfig
 -- | Pagination mode
 data Pagination
   = NoPagination -- ^ Fetch all result at once
-  | Paginate -- ^ Default pagination (20 entries)
   | PaginateBy Int -- ^ Fetch specified number of entries at once
   deriving (Eq, Ord)
+
+noPagination :: Pagination
+noPagination = NoPagination
+
+defaultPagination :: Pagination
+defaultPagination = PaginateBy 20
+
+userPagination :: Int -> Pagination
+userPagination = PaginateBy
 
 data Credentials = Credentials
   { credsPrivateToken :: ByteString -- ^ User's private token

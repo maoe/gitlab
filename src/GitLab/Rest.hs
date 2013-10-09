@@ -58,10 +58,12 @@ restSource f = loop 1
       response <- lift $ httpLbs request gitLabManager
       case A.decode' $ responseBody response of
         Nothing -> return ()
-        Just entities ->
-          when (length entities >= 1 && gitLabPagination >= Paginate) $ do
-            CL.sourceList entities
-            loop $ page + 1
+        Just entities -> do
+          CL.sourceList entities
+          let numEntities = length entities
+          case gitLabPagination of
+            NoPagination -> return ()
+            PaginateBy n -> when (numEntities == n) $ loop $ page + 1
 
 modifyPath :: Request m -> Request m
 modifyPath request = request
@@ -82,9 +84,6 @@ auth request = do
 paginationQuery :: Int -> Pagination -> Query
 paginationQuery page pagination = toQuery $ case pagination of
    NoPagination -> [] :: [(String, Text)]
-   Paginate ->
-     [ ("page", toPathPiece (page `max` 1))
-     ]
    PaginateBy perPage ->
      [ ("page", toPathPiece (page `max` 1))
      , ("per_page", toPathPiece perPage)
@@ -92,10 +91,10 @@ paginationQuery page pagination = toQuery $ case pagination of
 
 paginate :: Monad m => GitLabT m a -> GitLabT m a
 paginate = local $ \config -> config
-  { gitLabPagination = Paginate
+  { gitLabPagination = defaultPagination
   }
 
 paginateBy :: Monad m => Int -> GitLabT m a -> GitLabT m a
 paginateBy perPage = local $ \config -> config
-  { gitLabPagination = PaginateBy perPage
+  { gitLabPagination = userPagination perPage
   }

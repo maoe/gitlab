@@ -16,7 +16,7 @@ module GitLab.Types
   , SnippetId
 
   -- * Repositories
-  , Repository(..)
+  , RepositoryBranch(..)
   , Commit(..)
   , CommitId
   , CommitUser(..)
@@ -93,7 +93,7 @@ data Project = Project
   , projectWikiEnabled :: Bool
   , projectCreatedAt :: UTCTime
   , projectLastActivityAt :: UTCTime
-  }
+  } deriving Show
 
 newtype ProjectId = ProjectId Int deriving (Show, Num, PathPiece)
 
@@ -109,27 +109,18 @@ data Snippet = Snippet
   , snippetExpiresAt :: Maybe UTCTime
   , snippetUpdatedAt :: UTCTime
   , snippetCreatedAt :: UTCTime
-  }
+  } deriving Show
 
 newtype SnippetId = SnippetId Int deriving (Show, Num, PathPiece)
-
-data SnippetAuthor = SnippetAuthor
-  { snippetAuthorId :: UserId
-  , snippetAuthorUsername :: Text
-  , snippetAuthorEmail :: Text
-  , snippetAuthorName :: Text
-  , snippetAuthorBlocked :: Bool
-  , snippetAuthorCreatedAt :: UTCTime
-  }
 
 -----------------------------------------------------------
 -- Repositories
 
-data Repository = Repository
-  { repositoryName :: Text
-  , repositoryCommit :: Commit
-  , repositoryProtected :: Bool
-  }
+data RepositoryBranch = RepositoryBranch
+  { repositoryBranchName :: Text
+  , repositoryBranchCommit :: Commit
+  , repositoryBranchProtected :: Bool
+  } deriving Show
 
 data Commit = Commit
   { commitId :: CommitId
@@ -140,14 +131,14 @@ data Commit = Commit
   , commitCommitter :: CommitUser
   , commitAuthoredDate :: UTCTime
   , commitCommittedDate :: UTCTime
-  }
+  } deriving Show
 
 newtype CommitId = CommitId Text deriving (Show, PathPiece)
 
 data CommitUser = CommitUser
   { commitUserName :: Text
   , commitUserEmail :: Text
-  }
+  } deriving Show
 
 -----------------------------------------------------------
 -- Deploy Keys
@@ -156,7 +147,8 @@ data DeployKey = DeployKey
   { deployKeyId :: DeployKeyId
   , deployKeyTitle :: Text
   , deployKeyKey :: Text
-  }
+  , deployKeyCreatedAt :: UTCTime
+  } deriving Show
 
 newtype DeployKeyId = DeployKeyId Int deriving (Show, Num, PathPiece)
 
@@ -187,7 +179,7 @@ data User' = User'
   , user'Name :: Text
   , user'Blocked :: Bool
   , user'CreatedAt :: UTCTime
-  }
+  } deriving Show
 
 newtype UserId = UserId Int deriving (Show, Num, PathPiece)
 
@@ -221,7 +213,7 @@ data Group = Group
   , groupName :: Text
   , groupPath :: Text
   , groupOwnerId :: UserId
-  }
+  } deriving Show
 
 newtype GroupId = GroupId Int deriving (Show, Num, PathPiece)
 
@@ -240,7 +232,7 @@ data Issue = Issue
   , issueState :: IssueState
   , issueUpdatedAt :: UTCTime
   , issueCreatedAt :: UTCTime
-  }
+  } deriving Show
 
 newtype IssueId = IssueId Int deriving (Show, Num, PathPiece)
 
@@ -248,6 +240,7 @@ data IssueState
   = IssueOpened
   | IssueClosed
   | IssueReopened
+  deriving Show
 
 -----------------------------------------------------------
 -- Milestones
@@ -261,13 +254,14 @@ data Milestone = Milestone
   , milestoneDueDate :: UTCTime
   , milestoneCreatedAt :: UTCTime
   , milestoneUpdatedAt :: UTCTime
-  }
+  } deriving Show
 
 newtype MilestoneId = MilestoneId Int deriving (Show, Num, PathPiece)
 
 data MilestoneState
   = MilestoneActive
   | MilestoneClosed
+  deriving Show
 
 -----------------------------------------------------------
 -- Merge Requests
@@ -281,7 +275,7 @@ data MergeRequest = MergeRequest
   , mergeRequestClosed :: Bool
   , mergeRequestAuthor :: User'
   , mergeRequestAssignee :: User'
-  }
+  } deriving Show
 
 newtype MergeRequestId = MergeRequestId Int deriving (Show, Num, PathPiece)
 
@@ -293,7 +287,7 @@ data Note = Note
   , noteBody :: Text
   , noteAuthor :: User'
   , noteCreatedAt :: UTCTime
-  }
+  } deriving Show
 
 newtype NoteId = NoteId Int deriving (Show, Num, PathPiece)
 
@@ -339,8 +333,8 @@ deriveJSON defaultOptions ''SnippetId
 -- Repository
 
 deriveJSON defaultOptions
-  { fieldLabelModifier = camelToSnake . dropPrefix "repository" }
-  ''Repository
+  { fieldLabelModifier = camelToSnake . dropPrefix "repositoryBranch" }
+  ''RepositoryBranch
 
 deriveJSON defaultOptions
   { fieldLabelModifier = camelToSnake . dropPrefix "commit" }
