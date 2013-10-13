@@ -65,15 +65,19 @@ module GitLab.Types
   , NoteId
   ) where
 
+import Control.Applicative ((<$>), Applicative(..), Alternative(..))
 import Control.Monad (mzero)
 import Data.Char (toLower)
 import Data.Text (Text)
-import Data.Time (UTCTime)
+import Data.Time (UTCTime, parseTime)
+import System.Locale (defaultTimeLocale)
+import qualified Data.Text as T
 
 import Control.Lens ((&), (%~))
 import Control.Lens.Aeson (_Object)
 import Data.Aeson
 import Data.Aeson.TH
+import Data.Aeson.Types (typeMismatch)
 import Web.PathPieces (PathPiece(..))
 import qualified Data.HashMap.Strict as HM
 
@@ -337,6 +341,10 @@ data Note = Note
 newtype NoteId = NoteId Int deriving (Show, Num, PathPiece)
 
 -----------------------------------------------------------
+
+newtype Iso8601Time = Iso8601Time UTCTime deriving Show
+
+-----------------------------------------------------------
 -- Aeson manual instances
 
 instance ToJSON CurrentUser where
@@ -355,6 +363,21 @@ instance FromJSON CurrentUser where
     currentUserCanCreateProject <- v .: "can_create_project"
     return CurrentUser {..}
   parseJSON _ = mzero
+
+instance ToJSON Iso8601Time where
+  toJSON (Iso8601Time utcTime) = toJSON utcTime
+
+instance FromJSON Iso8601Time where
+  parseJSON (String t) =
+    tryFormats alternateFormats <|> fail "could not parse ISO-8601 date"
+    where
+      tryFormat f =
+        case parseTime defaultTimeLocale f (T.unpack t) of
+          Just d -> pure $ Iso8601Time d
+          Nothing -> empty
+      tryFormats = foldr1 (<|>) . map tryFormat
+      alternateFormats = ["%FT%T%QZ", "%FT%T%Q%z"]
+  parseJSON v = typeMismatch "UTCTime" v
 
 -----------------------------------------------------------
 -- Aeson derived instances

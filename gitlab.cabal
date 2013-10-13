@@ -43,6 +43,7 @@ library
       , lens-aeson
       , monad-control
       , mtl
+      , old-locale
       , path-pieces
       , text
       , time
