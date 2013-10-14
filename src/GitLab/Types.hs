@@ -178,8 +178,8 @@ data Commit = Commit
   , commitMessage :: Text
   , commitAuthor :: CommitUser
   , commitCommitter :: CommitUser
-  , commitAuthoredDate :: UTCTime
-  , commitCommittedDate :: UTCTime
+  , commitAuthoredDate :: Iso8601Time
+  , commitCommittedDate :: Iso8601Time
   } deriving Show
 
 newtype CommitParent = CommitParent
