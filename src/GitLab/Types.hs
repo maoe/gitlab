@@ -173,13 +173,17 @@ data RepositoryBranch = RepositoryBranch
 
 data Commit = Commit
   { commitId :: CommitId
-  , commitParents :: [CommitId]
+  , commitParents :: [CommitParent]
   , commitTree :: CommitId
   , commitMessage :: Text
   , commitAuthor :: CommitUser
   , commitCommitter :: CommitUser
   , commitAuthoredDate :: UTCTime
   , commitCommittedDate :: UTCTime
+  } deriving Show
+
+newtype CommitParent = CommitParent
+  { commitParentId :: CommitId
   } deriving Show
 
 newtype CommitId = CommitId Text deriving (Show, PathPiece)
@@ -425,6 +429,10 @@ deriveJSON defaultOptions
   ''Commit
 
 deriveJSON defaultOptions ''CommitId
+
+deriveJSON defaultOptions
+  { fieldLabelModifier = camelToSnake . dropPrefix "commitParent" }
+  ''CommitParent
 
 deriveJSON defaultOptions
   { fieldLabelModifier = camelToSnake . dropPrefix "commitUser" }
