@@ -1,7 +1,11 @@
 {-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
+#ifdef DEBUG
+{-# LANGUAGE ScopedTypeVariables #-}
+#endif
 module GitLab.Rest
   ( rest
   , restSource
@@ -25,8 +29,21 @@ import qualified Data.Conduit.List as CL
 
 import GitLab.Monad
 
-rest
-  :: (FromJSON a, MonadBaseControl IO m, MonadResource m)
+#ifdef DEBUG
+import Data.Attoparsec.Lazy (parse, Result(Done))
+#endif
+
+rest ::
+#ifdef DEBUG
+  forall m a.
+#endif
+  ( FromJSON a
+  , MonadBaseControl IO m
+  , MonadResource m
+#ifdef DEBUG
+  , Show a
+#endif
+  )
   => (Request (GitLabT m) -> Request (GitLabT m))
   -> GitLabT m (Maybe a)
 rest f = do
@@ -37,10 +54,24 @@ rest f = do
     , port = gitLabPort
     }
   response <- httpLbs request gitLabManager
+#ifdef DEBUG
+  case parse A.json (responseBody response) of
+    Done _ val -> liftIO $ print (fromJSON val :: A.Result a)
+    _ -> return ()
+#endif
   return $ A.decode $ responseBody response
 
-restSource
-  :: (FromJSON a, MonadBaseControl IO m, MonadResource m)
+restSource ::
+#ifdef DEBUG
+  forall m a.
+#endif
+  ( FromJSON a
+  , MonadBaseControl IO m
+  , MonadResource m
+#ifdef DEBUG
+  , Show a
+#endif
+  )
   => (Request (GitLabT m) -> Request (GitLabT m))
   -> Source (GitLabT m) a
 restSource f = loop 1
@@ -56,6 +87,16 @@ restSource f = loop 1
             renderQuery False $ paginationQuery page gitLabPagination
         }
       response <- lift $ httpLbs request gitLabManager
+#ifdef DEBUG
+      case parse A.json (responseBody response) of
+        Done _ val ->
+          case fromJSON val :: A.Result [a] of
+            A.Error reason -> do
+              liftIO $ print (responseBody response)
+              liftIO $ print reason
+            _ -> return ()
+        _ -> return ()
+#endif
       case A.decode' $ responseBody response of
         Nothing -> return ()
         Just entities -> do
