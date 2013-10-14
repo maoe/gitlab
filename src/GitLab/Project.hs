@@ -22,18 +22,18 @@ getProject
   :: (MonadBaseControl IO m, MonadResource m)
   => ProjectId
   -> GitLabT m (Maybe Project)
-getProject projectId = rest $ \request -> request
-  { path = TE.encodeUtf8 $ "/projects/" <> toPathPiece projectId
+getProject projId = rest $ \request -> request
+  { path = TE.encodeUtf8 $ "/projects/" <> toPathPiece projId
   }
 
 listProjectMembers
   :: (MonadBaseControl IO m, MonadResource m)
   => ProjectId
   -> Source (GitLabT m) ProjectMember
-listProjectMembers projectId = restSource $ \request -> request
+listProjectMembers projId = restSource $ \request -> request
   { path = TE.encodeUtf8 $ mconcat
       [ "/projects/"
-      , toPathPiece projectId
+      , toPathPiece projId
       , "/members"
       ]
   }
@@ -42,10 +42,10 @@ listProjectHooks
   :: (MonadBaseControl IO m, MonadResource m)
   => ProjectId
   -> Source (GitLabT m) ProjectHook
-listProjectHooks projectId = restSource $ \request -> request
+listProjectHooks projId = restSource $ \request -> request
   { path = TE.encodeUtf8 $ mconcat
       [ "/projects/"
-      , toPathPiece projectId
+      , toPathPiece projId
       , "/hooks"
       ]
   }

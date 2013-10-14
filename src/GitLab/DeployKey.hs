@@ -15,10 +15,10 @@ listDeployKeys
   :: (MonadBaseControl IO m, MonadResource m)
   => ProjectId
   -> Source (GitLabT m) DeployKey
-listDeployKeys projectId = restSource $ \request -> request
+listDeployKeys projId = restSource $ \request -> request
   { path = TE.encodeUtf8 $ mconcat
       [ "/projects/"
-      , toPathPiece projectId
+      , toPathPiece projId
       , "/keys"
       ]
   }

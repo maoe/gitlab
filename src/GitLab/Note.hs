@@ -15,10 +15,10 @@ listNotes
   :: (MonadBaseControl IO m, MonadResource m)
   => ProjectId
   -> Source (GitLabT m) Note
-listNotes projectId = restSource $ \request -> request
+listNotes projId = restSource $ \request -> request
   { path = TE.encodeUtf8 $ mconcat
       [ "/projects/"
-      , toPathPiece projectId
+      , toPathPiece projId
       , "/notes"
       ]
   }

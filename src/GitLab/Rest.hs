@@ -15,11 +15,9 @@ module GitLab.Rest
   ) where
 
 import Control.Monad.Reader
-import Data.ByteString (ByteString)
 import Data.Monoid ((<>))
 import Data.Text (Text)
 
-import Control.Monad.Base (MonadBase)
 import Data.Aeson as A
 import Data.Conduit
 import Network.HTTP.Conduit

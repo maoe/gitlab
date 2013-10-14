@@ -23,7 +23,6 @@ module GitLab.Monad
 import Control.Applicative (Applicative)
 import Control.Monad.Reader
 import Data.ByteString (ByteString)
-import Data.Text (Text)
 
 import Control.Monad.Base (MonadBase(..))
 import Control.Monad.Trans.Control

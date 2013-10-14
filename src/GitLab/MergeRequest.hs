@@ -15,10 +15,10 @@ listMergeRequests
   :: (MonadBaseControl IO m, MonadResource m)
   => ProjectId
   -> Source (GitLabT m) MergeRequest
-listMergeRequests projectId = restSource $ \request -> request
+listMergeRequests projId = restSource $ \request -> request
   { path = TE.encodeUtf8 $ mconcat
       [ "/projects/"
-      , toPathPiece projectId
+      , toPathPiece projId
       , "/merge_requests"
       ]
   }

@@ -15,8 +15,8 @@ listProjectSnippets
   :: (MonadBaseControl IO m, MonadResource m)
   => ProjectId
   -> Source (GitLabT m) Snippet
-listProjectSnippets projectId = restSource $ \request -> request
-  { path = TE.encodeUtf8 $ "/projects/" <> toPathPiece projectId <> "/snippets"
+listProjectSnippets projId = restSource $ \request -> request
+  { path = TE.encodeUtf8 $ "/projects/" <> toPathPiece projId <> "/snippets"
   }
 
 getProjectSnippet
@@ -24,11 +24,11 @@ getProjectSnippet
   => ProjectId
   -> SnippetId
   -> GitLabT m (Maybe Snippet)
-getProjectSnippet projectId snippetId = rest $ \request -> request
+getProjectSnippet projId snipId = rest $ \request -> request
   { path = TE.encodeUtf8 $ mconcat
       [ "/projects/"
-      , toPathPiece projectId
+      , toPathPiece projId
       , "/snippets/"
-      , toPathPiece snippetId
+      , toPathPiece snipId
       ]
   }

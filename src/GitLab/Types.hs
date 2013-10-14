@@ -65,9 +65,8 @@ module GitLab.Types
   , NoteId
   ) where
 
-import Control.Applicative ((<$>), Applicative(..), Alternative(..))
+import Control.Applicative (Applicative(..), Alternative(..))
 import Control.Monad (mzero)
-import Data.Char (toLower)
 import Data.Text (Text)
 import Data.Time (UTCTime, parseTime)
 import System.Locale (defaultTimeLocale)

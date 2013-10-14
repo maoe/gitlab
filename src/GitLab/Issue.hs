@@ -22,10 +22,10 @@ listProjectIssues
   :: (MonadBaseControl IO m, MonadResource m)
   => ProjectId
   -> Source (GitLabT m) Issue
-listProjectIssues projectId = restSource $ \request -> request
+listProjectIssues projId = restSource $ \request -> request
   { path = TE.encodeUtf8 $ mconcat
       [ "/projects/"
-      , toPathPiece projectId
+      , toPathPiece projId
       , "/issues"
       ]
   }

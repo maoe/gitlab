@@ -15,10 +15,10 @@ listRepositoryBranches
   :: (MonadBaseControl IO m, MonadResource m)
   => ProjectId
   -> Source (GitLabT m) RepositoryBranch
-listRepositoryBranches projectId = restSource $ \request -> request
+listRepositoryBranches projId = restSource $ \request -> request
   { path = TE.encodeUtf8 $ mconcat
       [ "/projects/"
-      , toPathPiece projectId
+      , toPathPiece projId
       , "/repository/branches"
       ]
   }

@@ -4,7 +4,6 @@
 module GitLab.User where
 import Data.Monoid ((<>))
 import Data.Text (Text)
-import qualified Data.ByteString.Char8 as BS8
 import qualified Data.Text.Encoding as TE
 
 import Data.Aeson.TH
@@ -42,9 +41,9 @@ getUser
   :: (MonadBaseControl IO m, MonadResource m)
   => UserId
   -> GitLabT m (Maybe User)
-getUser userId = rest $ \request -> request
+getUser usrId = rest $ \request -> request
   { method = "GET"
-  , path = TE.encodeUtf8 $ "/users/" <> toPathPiece userId
+  , path = TE.encodeUtf8 $ "/users/" <> toPathPiece usrId
   }
 
 createUser
@@ -62,9 +61,9 @@ modifyUser
   => UserId
   -> UserParams
   -> GitLabT m (Maybe User)
-modifyUser userId params = rest $ \request -> request
+modifyUser usrId params = rest $ \request -> request
   { method = "PUT"
-  , path = TE.encodeUtf8 $ "/users/" <> toPathPiece userId
+  , path = TE.encodeUtf8 $ "/users/" <> toPathPiece usrId
   , requestBody = RequestBodyLBS $ A.encode params
   }
 
@@ -72,9 +71,9 @@ deleteUser
   :: (MonadBaseControl IO m, MonadResource m)
   => UserId
   -> GitLabT m (Maybe User)
-deleteUser userId = rest $ \request -> request
+deleteUser usrId = rest $ \request -> request
   { method = "DELETE"
-  , path = TE.encodeUtf8 $ "/users/" <> toPathPiece userId
+  , path = TE.encodeUtf8 $ "/users/" <> toPathPiece usrId
   }
 
 getCurrentUser
@@ -124,9 +123,9 @@ addSshKeyForUser
   => UserId
   -> SshKeyParams
   -> GitLabT m (Maybe SshKey)
-addSshKeyForUser userId params = rest $ \request -> request
+addSshKeyForUser usrId params = rest $ \request -> request
   { method = "PUT"
-  , path = TE.encodeUtf8 $ "/users/" <> toPathPiece userId <> "/keys"
+  , path = TE.encodeUtf8 $ "/users/" <> toPathPiece usrId <> "/keys"
   , requestBody = RequestBodyLBS $ A.encode params
   }
 

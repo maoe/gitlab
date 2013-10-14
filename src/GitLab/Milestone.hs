@@ -15,10 +15,10 @@ listMilestones
   :: (MonadBaseControl IO m, MonadResource m)
   => ProjectId
   -> Source (GitLabT m) Milestone
-listMilestones projectId = restSource $ \request -> request
+listMilestones projId = restSource $ \request -> request
   { path = TE.encodeUtf8 $ mconcat
       [ "/projects/"
-      , toPathPiece projectId
+      , toPathPiece projId
       , "/milestones"
       ]
   }

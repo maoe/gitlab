@@ -22,7 +22,7 @@ getGroup
   :: (MonadBaseControl IO m, MonadResource m)
   => GroupId
   -> GitLabT m (Maybe Group)
-getGroup groupId = rest $ \request -> request
+getGroup grpId = rest $ \request -> request
   { method = "GET"
-  , path = TE.encodeUtf8 $ "/groups/" <> toPathPiece groupId
+  , path = TE.encodeUtf8 $ "/groups/" <> toPathPiece grpId
   }
