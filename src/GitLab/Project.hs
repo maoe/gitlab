@@ -49,3 +49,15 @@ listProjectHooks projId = restSource $ \request -> request
       , "/hooks"
       ]
   }
+
+listProjectEvents
+  :: (MonadBaseControl IO m, MonadResource m)
+  => ProjectId
+  -> Source (GitLabT m) ProjectEvent
+listProjectEvents projId = restSource $ \request -> request
+  { path = TE.encodeUtf8 $ mconcat
+      [ "/projects/"
+      , toPathPiece projId
+      , "/events"
+      ]
+  }

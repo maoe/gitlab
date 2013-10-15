@@ -14,6 +14,7 @@ module GitLab.Types
   , ProjectMember(..)
   , ProjectHook(..)
   , ProjectHookId
+  , ProjectEvent(..)
 
   -- * Project Snippets
 
@@ -145,6 +146,17 @@ data ProjectHook = ProjectHook
   } deriving Show
 
 newtype ProjectHookId = ProjectHookId Int deriving (Show, Num, PathPiece)
+
+data ProjectEvent = ProjectEvent
+  { projectEventTitle :: Maybe Text
+  , projectEventProjectId :: ProjectId
+  , projectEventActionName :: Text -- TODO
+  , projectEventTargetId :: Maybe Int -- TODO
+  , projectEventTargetType :: Maybe Text
+  , projectEventAuthorId :: UserId
+  , projectEventData :: Value -- TODO
+  , projectEventTargetTitle :: Maybe Text
+  } deriving Show
 
 -----------------------------------------------------------
 -- Project Snippets
@@ -423,6 +435,10 @@ deriveJSON defaultOptions
   ''ProjectHook
 
 deriveJSON defaultOptions ''ProjectHookId
+
+deriveJSON defaultOptions
+  { fieldLabelModifier = camelToSnake . dropPrefix "projectEvent" }
+  ''ProjectEvent
 
 -- Project Snippets
 
