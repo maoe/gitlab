@@ -28,6 +28,7 @@ module GitLab.Types
   , CommitId
   , CommitParent(..)
   , CommitUser(..)
+  , Tag(..)
 
   -- * Deploy Keys
   , DeployKey(..)
@@ -204,6 +205,12 @@ newtype CommitId = CommitId Text deriving (Show, PathPiece)
 data CommitUser = CommitUser
   { commitUserName :: Text
   , commitUserEmail :: Text
+  } deriving Show
+
+data Tag = Tag
+  { tagName :: Text
+  , tagCommit :: Commit
+  , tagProtected :: Maybe ()
   } deriving Show
 
 -----------------------------------------------------------
@@ -471,8 +478,8 @@ deriveJSON defaultOptions
   ''CommitUser
 
 deriveJSON defaultOptions
-  { fieldLabelModifier = camelToSnake . dropPrefix "simpleUser" }
-  ''SimpleUser
+  { fieldLabelModifier = camelToSnake . dropPrefix "tag" }
+  ''Tag
 
 -- Deploy Key
 
@@ -487,6 +494,10 @@ deriveJSON defaultOptions ''DeployKeyId
 deriveJSON defaultOptions
   { fieldLabelModifier = camelToSnake . dropPrefix "user" }
   ''User
+
+deriveJSON defaultOptions
+  { fieldLabelModifier = camelToSnake . dropPrefix "simpleUser" }
+  ''SimpleUser
 
 deriveJSON defaultOptions
   { constructorTagModifier = camelToSnake . dropPrefix "user" }

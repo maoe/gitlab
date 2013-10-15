@@ -22,3 +22,15 @@ listBranches projId = restSource $ \request -> request
       , "/repository/branches"
       ]
   }
+
+listTags
+  :: (MonadBaseControl IO m, MonadResource m)
+  => ProjectId
+  -> Source (GitLabT m) Tag
+listTags projId = restSource $ \request -> request
+  { path = TE.encodeUtf8 $ mconcat
+      [ "/projects/"
+      , toPathPiece projId
+      , "/repository/tags"
+      ]
+  }
