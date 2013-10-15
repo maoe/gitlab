@@ -52,6 +52,7 @@ module GitLab.Types
   -- * Groups
   , Group(..)
   , GroupId
+  , GroupMember(..)
 
   -- * Issues
   , Issue(..)
@@ -320,6 +321,16 @@ data Group = Group
 
 newtype GroupId = GroupId Int deriving (Show, Num, PathPiece)
 
+data GroupMember = GroupMember
+  { groupMemberId :: UserId
+  , groupMemberUsername :: Text
+  , groupMemberEmail :: Text
+  , groupMemberName :: Text
+  , groupMemberState :: UserState
+  , groupMemberCreatedAt :: UTCTime
+  , groupMemberAccessLevel :: Int
+  } deriving Show
+
 -----------------------------------------------------------
 -- Issues
 
@@ -562,6 +573,10 @@ deriveJSON defaultOptions
   ''Group
 
 deriveJSON defaultOptions ''GroupId
+
+deriveJSON defaultOptions
+  { fieldLabelModifier = camelToSnake . dropPrefix "groupMember" }
+  ''GroupMember
 
 -- Issues
 

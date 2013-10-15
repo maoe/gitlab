@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedStrings #-}
 module GitLab.Group where
-import Data.Monoid ((<>))
+import Data.Monoid ((<>), mconcat)
 import qualified Data.Text.Encoding as TE
 
 import Data.Conduit
@@ -25,4 +25,17 @@ getGroup
 getGroup grpId = rest $ \request -> request
   { method = "GET"
   , path = TE.encodeUtf8 $ "/groups/" <> toPathPiece grpId
+  }
+
+listGroupMembers
+  :: (MonadBaseControl IO m, MonadResource m)
+  => GroupId
+  -> Source (GitLabT m) GroupMember
+listGroupMembers grpId = restSource $ \request -> request
+  { method = "GET"
+  , path = TE.encodeUtf8 $ mconcat
+      [ "/groups/"
+      , toPathPiece grpId
+      , "/members"
+      ]
   }
