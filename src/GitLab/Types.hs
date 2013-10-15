@@ -26,6 +26,7 @@ module GitLab.Types
   , RepositoryBranch(..)
   , Commit(..)
   , CommitId
+  , CommitParent(..)
   , CommitUser(..)
 
   -- * Deploy Keys
