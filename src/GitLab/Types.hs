@@ -32,7 +32,7 @@ module GitLab.Types
 
   -- * Users
   , User(..)
-  , User'(..)
+  , SimpleUser(..)
   , UserId
   , UserState(..)
   , ThemeId
@@ -97,7 +97,7 @@ data Project = Project
   , projectPathWithNamespace :: Text
 
   , projectDefaultBranch :: Maybe Text
-  , projectOwner :: User'
+  , projectOwner :: SimpleUser
   , projectPublic :: Bool
 
   , projectWebUrl :: Text
@@ -153,7 +153,7 @@ data Snippet = Snippet
   { snippetId :: SnippetId
   , snippetTitle :: Text
   , snippetFileName :: FilePath
-  , snippetAuthor :: User'
+  , snippetAuthor :: SimpleUser
   , snippetExpiresAt :: Maybe UTCTime
   , snippetUpdatedAt :: UTCTime
   , snippetCreatedAt :: UTCTime
@@ -224,13 +224,13 @@ data User = User
   , userColorSchemeId :: ColorSchemeId
   } deriving Show
 
-data User' = User'
-  { user'Id :: UserId
-  , user'Username :: Text
-  , user'Email :: Text
-  , user'Name :: Text
-  , user'State :: UserState
-  , user'CreatedAt :: UTCTime
+data SimpleUser = SimpleUser
+  { simpleUserId :: UserId
+  , simpleUserUsername :: Text
+  , simpleUserEmail :: Text
+  , simpleUserName :: Text
+  , simpleUserState :: UserState
+  , simpleUserCreatedAt :: UTCTime
   } deriving Show
 
 newtype UserId = UserId Int deriving (Show, Num, PathPiece)
@@ -279,8 +279,8 @@ data Issue = Issue
   , issueDescription :: Text
   , issueLabels :: [Text]
   , issueMilestone :: Maybe Milestone
-  , issueAssignee :: Maybe User'
-  , issueAuthor :: User'
+  , issueAssignee :: Maybe SimpleUser
+  , issueAuthor :: SimpleUser
   , issueState :: IssueState
   , issueUpdatedAt :: UTCTime
   , issueCreatedAt :: UTCTime
@@ -325,8 +325,8 @@ data MergeRequest = MergeRequest
   , mergeRequestProjectId :: ProjectId
   , mergeRequestTitle :: Text
   , mergeRequestState :: MergeRequestState
-  , mergeRequestAuthor :: User'
-  , mergeRequestAssignee :: Maybe User'
+  , mergeRequestAuthor :: SimpleUser
+  , mergeRequestAssignee :: Maybe SimpleUser
   } deriving Show
 
 newtype MergeRequestId = MergeRequestId Int deriving (Show, Num, PathPiece)
@@ -343,7 +343,7 @@ data MergeRequestState
 data Note = Note
   { noteId :: NoteId
   , noteBody :: Text
-  , noteAuthor :: User'
+  , noteAuthor :: SimpleUser
   , noteCreatedAt :: UTCTime
   } deriving Show
 
@@ -453,8 +453,8 @@ deriveJSON defaultOptions
   ''CommitUser
 
 deriveJSON defaultOptions
-  { fieldLabelModifier = camelToSnake . dropPrefix "user'" }
-  ''User'
+  { fieldLabelModifier = camelToSnake . dropPrefix "simpleUser" }
+  ''SimpleUser
 
 -- Deploy Key
 
