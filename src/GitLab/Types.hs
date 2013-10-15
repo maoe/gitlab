@@ -68,7 +68,7 @@ module GitLab.Types
 import Control.Applicative (Applicative(..), Alternative(..))
 import Control.Monad (mzero)
 import Data.Text (Text)
-import Data.Time (UTCTime, parseTime)
+import Data.Time (Day, UTCTime, formatTime, parseTime)
 import System.Locale (defaultTimeLocale)
 import qualified Data.Text as T
 
@@ -278,8 +278,8 @@ data Issue = Issue
   , issueTitle :: Text
   , issueDescription :: Text
   , issueLabels :: [Text]
-  , issueMilestone :: Milestone
-  , issueAssignee :: User'
+  , issueMilestone :: Maybe Milestone
+  , issueAssignee :: Maybe User'
   , issueAuthor :: User'
   , issueState :: IssueState
   , issueUpdatedAt :: UTCTime
@@ -303,7 +303,7 @@ data Milestone = Milestone
   , milestoneTitle :: Text
   , milestoneDescription :: Text
   , milestoneState :: MilestoneState
-  , milestoneDueDate :: UTCTime
+  , milestoneDueDate :: Maybe Day
   , milestoneCreatedAt :: UTCTime
   , milestoneUpdatedAt :: UTCTime
   } deriving Show
@@ -381,6 +381,15 @@ instance FromJSON Iso8601Time where
       tryFormats = foldr1 (<|>) . map tryFormat
       alternateFormats = ["%FT%T%QZ", "%FT%T%Q%z"]
   parseJSON v = typeMismatch "UTCTime" v
+
+instance ToJSON Day where
+  toJSON = toJSON . formatTime defaultTimeLocale "%F"
+
+instance FromJSON Day where
+  parseJSON = withText "Day" $ \t ->
+    case parseTime defaultTimeLocale "%F" (T.unpack t) of
+      Just d -> pure d
+      Nothing -> empty
 
 -----------------------------------------------------------
 -- Aeson derived instances
