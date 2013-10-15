@@ -1,0 +1,7 @@
+*~
+.DS_Store
+/.cabal-sandbox/
+/cabal.sandbox.config
+/dist/
+/gitlab.sublime-project
+/gitlab.sublime-workspace
