@@ -324,12 +324,18 @@ data MergeRequest = MergeRequest
   , mergeRequestSourceBranch :: Text
   , mergeRequestProjectId :: ProjectId
   , mergeRequestTitle :: Text
-  , mergeRequestClosed :: Bool
+  , mergeRequestState :: MergeRequestState
   , mergeRequestAuthor :: User'
-  , mergeRequestAssignee :: User'
+  , mergeRequestAssignee :: Maybe User'
   } deriving Show
 
 newtype MergeRequestId = MergeRequestId Int deriving (Show, Num, PathPiece)
+
+data MergeRequestState
+  = MergeRequestOpened
+  | MergeRequestMerged
+  | MergeRequestClosed
+  deriving Show
 
 -----------------------------------------------------------
 -- Notes
@@ -517,6 +523,11 @@ deriveJSON defaultOptions
   ''MergeRequest
 
 deriveJSON defaultOptions ''MergeRequestId
+
+deriveJSON defaultOptions
+  { constructorTagModifier = camelToSnake . dropPrefix "mergeRequest"
+  }
+  ''MergeRequestState
 
 -- Notes
 
