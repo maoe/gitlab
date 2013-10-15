@@ -31,6 +31,7 @@ module GitLab.Types
   , Tag(..)
   , RepositoryCommit(..)
   , CommitDiff(..)
+  , RepositoryTree(..)
 
   -- * Deploy Keys
   , DeployKey(..)
@@ -233,6 +234,13 @@ data CommitDiff = CommitDiff
   , commitDiffNewFile :: Bool
   , commitDiffRenamedFile :: Bool
   , commitDiffDeletedFile :: Bool
+  } deriving Show
+
+data RepositoryTree = RepositoryTree
+  { repositoryTreeId :: CommitId
+  , repositoryTreeName :: Text
+  , repositoryTreeType :: Text
+  , repositoryTreeMode :: Text
   } deriving Show
 
 -----------------------------------------------------------
@@ -510,6 +518,10 @@ deriveJSON defaultOptions
 deriveJSON defaultOptions
   { fieldLabelModifier = camelToSnake . dropPrefix "commitDiff" }
   ''CommitDiff
+
+deriveJSON defaultOptions
+  { fieldLabelModifier = camelToSnake . dropPrefix "repositoryTree" }
+  ''RepositoryTree
 
 -- Deploy Key
 
