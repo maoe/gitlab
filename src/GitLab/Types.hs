@@ -30,6 +30,7 @@ module GitLab.Types
   , CommitUser(..)
   , Tag(..)
   , RepositoryCommit(..)
+  , CommitDiff(..)
 
   -- * Deploy Keys
   , DeployKey(..)
@@ -221,6 +222,17 @@ data RepositoryCommit = RepositoryCommit
   , repositoryCommitAuthorName :: Text
   , repositoryCommitAuthorEmail :: Text
   , repositoryCommitCreatedAt :: Iso8601Time
+  } deriving Show
+
+data CommitDiff = CommitDiff
+  { commitDiffDiff :: Text
+  , commitDiffNewPath :: FilePath
+  , commitDiffOldPath :: FilePath
+  , commitDiffAMode :: Maybe Text
+  , commitDiffBMode :: Maybe Text
+  , commitDiffNewFile :: Bool
+  , commitDiffRenamedFile :: Bool
+  , commitDiffDeletedFile :: Bool
   } deriving Show
 
 -----------------------------------------------------------
@@ -494,6 +506,10 @@ deriveJSON defaultOptions
 deriveJSON defaultOptions
   { fieldLabelModifier = camelToSnake . dropPrefix "repositoryCommit" }
   ''RepositoryCommit
+
+deriveJSON defaultOptions
+  { fieldLabelModifier = camelToSnake . dropPrefix "commitDiff" }
+  ''CommitDiff
 
 -- Deploy Key
 
