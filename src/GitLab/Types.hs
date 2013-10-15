@@ -29,6 +29,7 @@ module GitLab.Types
   , CommitParent(..)
   , CommitUser(..)
   , Tag(..)
+  , RepositoryCommit(..)
 
   -- * Deploy Keys
   , DeployKey(..)
@@ -211,6 +212,15 @@ data Tag = Tag
   { tagName :: Text
   , tagCommit :: Commit
   , tagProtected :: Maybe ()
+  } deriving Show
+
+data RepositoryCommit = RepositoryCommit
+  { repositoryCommitId :: CommitId
+  , repositoryCommitShortId :: Text
+  , repositoryCommitTitle :: Text
+  , repositoryCommitAuthorName :: Text
+  , repositoryCommitAuthorEmail :: Text
+  , repositoryCommitCreatedAt :: Iso8601Time
   } deriving Show
 
 -----------------------------------------------------------
@@ -480,6 +490,10 @@ deriveJSON defaultOptions
 deriveJSON defaultOptions
   { fieldLabelModifier = camelToSnake . dropPrefix "tag" }
   ''Tag
+
+deriveJSON defaultOptions
+  { fieldLabelModifier = camelToSnake . dropPrefix "repositoryCommit" }
+  ''RepositoryCommit
 
 -- Deploy Key
 

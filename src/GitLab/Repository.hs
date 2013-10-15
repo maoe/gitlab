@@ -34,3 +34,15 @@ listTags projId = restSource $ \request -> request
       , "/repository/tags"
       ]
   }
+
+listCommits
+  :: (MonadBaseControl IO m, MonadResource m)
+  => ProjectId
+  -> Source (GitLabT m) RepositoryCommit
+listCommits projId = restSource $ \request -> request
+  { path = TE.encodeUtf8 $ mconcat
+      [ "/projects/"
+      , toPathPiece projId
+      , "/repository/commits"
+      ]
+  }
