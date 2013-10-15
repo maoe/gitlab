@@ -1,3 +1,0 @@
-[submodule "modules/aeson"]
-	path = modules/aeson
-	url = git@github.com:maoe/aeson.git
