@@ -23,7 +23,7 @@ module GitLab.Types
   , SnippetId
 
   -- * Repositories
-  , RepositoryBranch(..)
+  , Branch(..)
   , Commit(..)
   , CommitId
   , CommitParent(..)
@@ -178,10 +178,10 @@ newtype SnippetId = SnippetId Int deriving (Show, Num, PathPiece)
 -----------------------------------------------------------
 -- Repositories
 
-data RepositoryBranch = RepositoryBranch
-  { repositoryBranchName :: Text
-  , repositoryBranchCommit :: Commit
-  , repositoryBranchProtected :: Bool
+data Branch = Branch
+  { branchName :: Text
+  , branchCommit :: Commit
+  , branchProtected :: Bool
   } deriving Show
 
 data Commit = Commit
@@ -453,8 +453,8 @@ deriveJSON defaultOptions ''SnippetId
 -- Repository
 
 deriveJSON defaultOptions
-  { fieldLabelModifier = camelToSnake . dropPrefix "repositoryBranch" }
-  ''RepositoryBranch
+  { fieldLabelModifier = camelToSnake . dropPrefix "branch" }
+  ''Branch
 
 deriveJSON defaultOptions
   { fieldLabelModifier = camelToSnake . dropPrefix "commit" }

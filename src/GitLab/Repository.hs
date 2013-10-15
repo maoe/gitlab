@@ -11,11 +11,11 @@ import Web.PathPieces (toPathPiece)
 import GitLab.Rest (restSource)
 import GitLab.Types
 
-listRepositoryBranches
+listBranches
   :: (MonadBaseControl IO m, MonadResource m)
   => ProjectId
-  -> Source (GitLabT m) RepositoryBranch
-listRepositoryBranches projId = restSource $ \request -> request
+  -> Source (GitLabT m) Branch
+listBranches projId = restSource $ \request -> request
   { path = TE.encodeUtf8 $ mconcat
       [ "/projects/"
       , toPathPiece projId
